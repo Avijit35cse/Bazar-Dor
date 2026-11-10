@@ -37,8 +37,8 @@ const TickerList = ({
                     <span
                         className={`font-semibold ${
                             item.direction === "up"
-                                ? "text-[#1a9951]"
-                                : "text-[#d03739]"
+                                ? "text-[#d03739]"
+                                : "text-[#1a9951]"
                         }`}
                     >
                         <span className="sr-only">
@@ -81,7 +81,7 @@ const PriceTicker = async () => {
             <style>{TICKER_KEYFRAMES}</style>
 
             <div className="overflow-hidden motion-reduce:overflow-x-auto">
-                <div className="flex w-max animate-[ticker-scroll_45s_linear_infinite] hover:[animation-play-state:paused] motion-reduce:animate-none">
+                <div className="flex w-max animate-[ticker-scroll_45s_linear_infinite] hover:paused motion-reduce:animate-none">
                     <TickerList items={tickerItems} />
                     <TickerList items={tickerItems} duplicate />
                 </div>

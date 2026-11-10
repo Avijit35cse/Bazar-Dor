@@ -35,3 +35,15 @@ export type Product = {
     change: ProductChange;
     markets: Market[];
 };
+
+export type PriceMoverProps ={
+    products : Product[]
+}
+
+export type ProductCardProps = {
+    product: Product;
+};
+
+export type AllProductsProps = {
+    products: Product[];
+};
