@@ -4,6 +4,8 @@ import "./globals.css";
 import { Hind_Siliguri } from "next/font/google"
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import PriceTicker from "@/components/layout/PriceTicker";
+import { Suspense } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,6 +38,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <Navbar />
+        <Suspense fallback= {<div className="flex h-9 items-center px-4 text-sm text-gray-500">
+            বাজারদর লোড হচ্ছে...
+        </div>}>
+            <PriceTicker/>
+        </Suspense>
         <main>
           {children}
         </main>

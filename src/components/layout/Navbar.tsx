@@ -4,7 +4,6 @@ import { useSyncExternalStore } from "react";
 import { ChevronDown, LogOut, UserRound } from "lucide-react";
 
 import CategoryNav from "@/components/layout/CategoryNav";
-import PriceTicker from "@/components/layout/PriceTicker";
 
 type NavbarProps = {
     isLoggedIn?: boolean;
@@ -129,7 +128,6 @@ const Navbar = ({ isLoggedIn = false }: NavbarProps) => (
             <CategoryNav />
         </header>
 
-        <PriceTicker />
     </>
 );
 
