@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { Suspense, useSyncExternalStore } from "react";
 import { ChevronDown, LogOut, UserRound } from "lucide-react";
 
 import CategoryNav from "@/components/layout/CategoryNav";
@@ -124,8 +124,10 @@ const Navbar = ({ isLoggedIn = false }: NavbarProps) => (
 
                 {isLoggedIn ? <ProfileMenuPlaceholder /> : <AuthButtons />}
             </div>
-
-            <CategoryNav />
+            <Suspense fallback={<div className="h-12" />}>
+                <CategoryNav />
+            </Suspense>
+            
         </header>
 
     </>

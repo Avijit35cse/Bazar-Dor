@@ -22,8 +22,8 @@ const FilterIcon = () => (
 
 const Hero = () => {
     return (
-        <section className="bg-[#f4faf4] px-4 py-4">
-            <div className="mx-auto w-full max-w-[1152px] rounded-2xl border border-[#dcebdc] bg-[#fffefb] px-4 py-4 shadow-[0_1px_2px_rgba(23,58,36,0.03)] sm:py-2.5">
+        <section className="bg-[#f0f5f0] px-4 py-4">
+            <div className="mx-auto w-full max-w-[1152px] rounded-2xl border border-[#e1e8e1] bg-[#fafcfa] px-4 py-4 shadow-[0_1px_2px_rgba(23,58,36,0.03)] sm:py-2.5">
                 <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:gap-7">
                     {/* Left Content */}
                     <div className="min-w-0">
@@ -35,7 +35,7 @@ const Hero = () => {
                         </div>
 
                         {/* Heading */}
-                        <h1 className="mt-2.5 text-[24px] font-bold leading-[1.1] tracking-[-0.3px] text-[#173a24] sm:text-[28px]">
+                        <h1 className="mt-2.5 text-[24px] font-bold leading-[1.1] tracking-[-0.3px] text-[#1d271f] sm:text-[28px]">
                             আজকের বাজারের দাম এক নজরে
                         </h1>
 
@@ -47,7 +47,7 @@ const Hero = () => {
                         {/* CTA */}
                         <a
                             href="#সব-পণ্য"
-                            className="mt-[18px] inline-flex items-center gap-1.5 rounded-md bg-[#0b7d34] px-3 py-1.5 text-[11px] font-semibold leading-[13px] text-white transition-colors hover:bg-[#096a2c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b7d34] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fffefb] sm:px-2.5 sm:text-[10.5px]"
+                            className="mt-[18px] inline-flex items-center gap-1.5 rounded-md bg-[#05893e] px-3 py-1.5 text-[11px] font-semibold leading-[13px] text-white transition-colors hover:bg-[#096a2c] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0b7d34] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fffefb] sm:px-2.5 sm:text-[10.5px]"
                         >
                             <FilterIcon />
                             সব দাম দেখুন

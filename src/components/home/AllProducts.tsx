@@ -6,7 +6,7 @@ const AllProducts = ({ products }: AllProductsProps) => {
     return (
         <section
             id="সব-পণ্য"
-            className="scroll-mt-24 bg-white px-4 pb-16 pt-10"
+            className="scroll-mt-24 bg-[#F0F5F0] px-4 pb-16 pt-10"
         >
             <div className="mx-auto w-full max-w-[1152px]">
                 <div>

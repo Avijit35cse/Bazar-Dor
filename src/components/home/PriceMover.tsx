@@ -14,7 +14,7 @@ const PriceMover = ({ products }: PriceMoverProps) => {
         .slice(0, 6);
 
     return (
-        <section className="bg-white px-4 pt-10">
+        <section className="bg-[#f0f5f0] px-4 pt-10">
             <div className="mx-auto w-full max-w-[1152px]">
                 <div>
                     <h2 className="flex items-center gap-2 text-xl font-bold leading-[1.4] text-[#1d271f]">

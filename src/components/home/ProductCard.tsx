@@ -37,7 +37,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     return (
         <Link
             href={`/products/${product.slug}`}
-            className="block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            className="block h-full rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAFCFA]"
         >
             <article className="flex h-full flex-col gap-3 rounded-2xl border border-[#e1e8e1] bg-[#fafcfa] p-4 transition-colors duration-200 hover:border-[#c9dccd] hover:bg-white">
                 <div className="flex items-start gap-3">

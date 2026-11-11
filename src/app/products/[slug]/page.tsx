@@ -94,9 +94,12 @@ const ProductDetailsContent = async ({
                         ›
                     </span>
 
-                    <span className="text-[#1d271f]/75">
+                    <Link
+                        href={`/category/${product.category}`}
+                        className="text-[#1d271f]/75 transition-colors hover:text-[#05893e]"
+                    >
                         {product.categoryNameBn}
-                    </span>
+                    </Link>
 
                     <span aria-hidden="true" className="text-[#1d271f]/40">
                         ›
@@ -346,7 +349,7 @@ const ProductDetailsContent = async ({
                                                     {formatAverage(
                                                         (market.min +
                                                             market.max) /
-                                                            2
+                                                        2
                                                     )}{" "}
                                                     টাকা
                                                 </td>

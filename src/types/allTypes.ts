@@ -16,7 +16,7 @@ export type PriceChange = {
     price: number;
     unit: string;
     change: number;
-    direction: "up" | "down";
+    direction: "up" | "down" | "flat";
 };
 
 export type Product = {
