@@ -1,31 +1,17 @@
 "use client";
 
-import { Suspense, useSyncExternalStore } from "react";
+import { Suspense } from "react";
 import { ChevronDown, LogOut, UserRound } from "lucide-react";
 
 import CategoryNav from "@/components/layout/CategoryNav";
+import BanglaDate from "../shared/BanglaDate";
+import Link from "next/link";
 
 type NavbarProps = {
     isLoggedIn?: boolean;
 };
 
 const BRAND_NAME = "বাজার দর";
-
-const banglaDateFormatter = new Intl.DateTimeFormat("bn-BD", {
-    timeZone: "Asia/Dhaka",
-    numberingSystem: "beng",
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-});
-
-const formatBanglaDate = (date: Date) => banglaDateFormatter.format(date);
-
-const subscribeToNothing = () => () => {};
-
-const getClientDate = () => formatBanglaDate(new Date());
-const getServerDate = () => null;
 
 const Logo = () => (
     <div
@@ -36,23 +22,12 @@ const Logo = () => (
     </div>
 );
 
-const BanglaDate = () => {
-    // Reads the current date only in the browser, so prerendering stays stable.
-    const today = useSyncExternalStore(
-        subscribeToNothing,
-        getClientDate,
-        getServerDate
-    );
-
-    return (
-        <p className="min-h-3.5 text-[10px] leading-[1.333] text-[#1d271f] sm:min-h-4 sm:text-xs">
-            {today}
-        </p>
-    );
-};
-
 const Brand = () => (
-    <div className="flex min-w-0 items-center gap-2">
+    <Link
+        href="/"
+        className="flex min-w-0 items-center gap-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2"
+        aria-label="বাজার দর - হোম"
+    >
         <Logo />
 
         <div className="flex min-w-0 flex-col">
@@ -60,9 +35,9 @@ const Brand = () => (
                 {BRAND_NAME}
             </span>
 
-            <BanglaDate />
+            <BanglaDate className="min-h-3.5 text-[10px] leading-[1.333] text-[#1d271f] sm:min-h-4 sm:text-xs" />
         </div>
-    </div>
+    </Link>
 );
 
 const AuthButtons = () => (
@@ -95,7 +70,7 @@ const ProfileMenuPlaceholder = () => (
             </span>
 
             <span className="hidden text-sm font-medium text-[#1d271f] sm:block">
-                
+
             </span>
 
             <ChevronDown
@@ -127,7 +102,7 @@ const Navbar = ({ isLoggedIn = false }: NavbarProps) => (
             <Suspense fallback={<div className="h-12" />}>
                 <CategoryNav />
             </Suspense>
-            
+
         </header>
 
     </>

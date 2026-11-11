@@ -1,4 +1,5 @@
 import Image from "next/image";
+import BanglaDate from "../shared/BanglaDate";
 
 const FilterIcon = () => (
     <svg
@@ -30,7 +31,7 @@ const Hero = () => {
                         {/* Bengali Date Badge */}
                         <div className="flex">
                             <span className="inline-flex items-center rounded-full bg-[#eaf6ec] px-3 py-0.5 text-[10px] font-medium leading-[15px] text-[#2f7d3f]">
-                                মঙ্গলবার, ৬ আগস্ট, ২০২৬
+                                <BanglaDate />
                             </span>
                         </div>
 

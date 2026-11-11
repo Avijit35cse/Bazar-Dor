@@ -76,7 +76,7 @@ const PriceTicker = async () => {
     return (
         <section
             aria-label="আজকের দামের পরিবর্তন"
-            className="w-full border-b border-[#e1e8e1] bg-[#fafcfa]"
+            className="sticky top-28 z-30 w-full border-b border-[#e1e8e1] bg-[#fafcfa] sm:top-[116px]"
         >
             <style>{TICKER_KEYFRAMES}</style>
 
