@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 import { authClient } from "@/lib/auth-client";
 
@@ -60,7 +61,7 @@ const SocialButton = ({
         {icon}
         <span>{label}</span>
     </button>
-)
+);
 
 export default function SignInPage() {
     const router = useRouter();
@@ -72,17 +73,25 @@ export default function SignInPage() {
     const [errorMessage, setErrorMessage] = useState("");
 
     const handleGoogleSignIn = async () => {
-        await authClient.signIn.social({
-            provider: "google",
-            callbackURL: getCallbackUrl(),
-        });
+        try {
+            await authClient.signIn.social({
+                provider: "google",
+                callbackURL: getCallbackUrl(),
+            });
+        } catch {
+            toast.error("Google দিয়ে সাইন ইন করা সম্ভব হয়নি।");
+        }
     };
 
     const handleGitHubSignIn = async () => {
-        await authClient.signIn.social({
-            provider: "github",
-            callbackURL: getCallbackUrl(),
-        });
+        try {
+            await authClient.signIn.social({
+                provider: "github",
+                callbackURL: getCallbackUrl(),
+            });
+        } catch {
+            toast.error("GitHub দিয়ে সাইন ইন করা সম্ভব হয়নি।");
+        }
     };
 
     const handleSignIn = async () => {
@@ -98,14 +107,23 @@ export default function SignInPage() {
             });
 
             if (error) {
-                setErrorMessage(error.message || "ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।");
+                const message =
+                    error.message || "ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।";
+
+                setErrorMessage(message);
+                toast.error(message);
                 return;
             }
+
+            toast.success("সফলভাবে সাইন ইন হয়েছে!");
 
             router.push(getCallbackUrl());
             router.refresh();
         } catch {
-            setErrorMessage("সাইন ইন করা সম্ভব হয়নি। আবার চেষ্টা করুন।");
+            const message = "সাইন ইন করা সম্ভব হয়নি। আবার চেষ্টা করুন।";
+
+            setErrorMessage(message);
+            toast.error(message);
         } finally {
             setIsLoading(false);
         }
@@ -229,7 +247,6 @@ export default function SignInPage() {
                             icon={<GoogleIcon />}
                             label="Google দিয়ে চালিয়ে যান"
                             onClick={handleGoogleSignIn}
-
                         />
 
                         <SocialButton

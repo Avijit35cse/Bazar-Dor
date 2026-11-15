@@ -4,7 +4,7 @@
 import { useState } from "react";
 import type { Product } from "@/types/allTypes";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Home } from "lucide-react";
 
 type CategoryProductsProps = {
     products: Product[];
@@ -43,7 +43,7 @@ const CategoryProducts = ({ products }: CategoryProductsProps) => {
         return 0;
     });
 
-    const categoryName = products[0]?.categoryNameBn ?? "";
+    const categoryName = products[0]?.categoryNameBn ?? "পণ্য পাওয়া যায়নি";
     const categoryIcon = products[0]?.categoryIcon ?? "🛒";
     const unitLabel =
         UNIT_LABELS[products[0]?.unit ?? ""] ?? products[0]?.unit ?? "কেজি";
@@ -106,85 +106,109 @@ const CategoryProducts = ({ products }: CategoryProductsProps) => {
                     মোট {toBanglaDigits(String(products.length))}টি পণ্য দেখানো হচ্ছে
                 </p>
 
-                {/* Product grid */}
-                <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                    {sortedProducts.map((product) => {
-                        const isUp = product.change.dir === "up";
-                        const isDown = product.change.dir === "down";
+                {/* Product grid / Empty state */}
+                {products.length === 0 ? (
+                    <div className="mt-5 rounded-xl border border-[#e1e8e1] bg-[#fafcfa] px-5 py-14 text-center shadow-[0_1px_2px_rgba(23,58,36,0.03)]">
+                        <span className="text-5xl" aria-hidden="true">
+                            🛒
+                        </span>
 
-                        const changeColor = isUp
-                            ? "text-[#d03739]"
-                            : isDown
-                                ? "text-[#1a9951]"
-                                : "text-[#1d271f]";
+                        <h2 className="mt-4 text-lg font-bold text-[#1d271f]">
+                            এই ক্যাটাগরিতে কোনো পণ্য পাওয়া যায়নি!
+                        </h2>
 
-                        const arrow = isUp ? "▲" : isDown ? "▼" : "—";
+                        <p className="mt-2 text-sm text-[#7d8a80]">
+                            দুঃখিত, এই মুহূর্তে এখানে কোনো পণ্যের তথ্য নেই।
+                        </p>
 
-                        const productUnit =
-                            UNIT_LABELS[product.unit] ?? product.unit;
+                        <Link
+                            href="/"
+                            className="mt-6 inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-[#05893e] px-5 text-sm font-semibold text-white transition hover:bg-[#047a37]"
+                        >
+                            <Home size={16} />
+                            হোম পেজে ফিরে যান
+                        </Link>
+                    </div>
+                ) : (
+                    <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                        {sortedProducts.map((product) => {
+                            const isUp = product.change.dir === "up";
+                            const isDown = product.change.dir === "down";
 
-                        return (
-                            <Link
-                                key={product.id}
-                                href={`/product/${product.slug}`}
-                                className="group block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f0f5f0]"
-                            >
-                                <article className="flex h-full flex-col justify-between gap-3.5 rounded-xl border border-[#e1e8e1] bg-[#fafcfa] p-4 shadow-[0_1px_2px_rgba(23,58,36,0.03)] transition-colors duration-200 group-hover:border-[#c9dccd]">
-                                    <div className="flex items-start gap-4">
-                                        <span
-                                            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#f0f5f0] text-[26px] leading-none"
-                                            aria-hidden="true"
-                                        >
-                                            {product.categoryIcon}
-                                        </span>
+                            const changeColor = isUp
+                                ? "text-[#d03739]"
+                                : isDown
+                                    ? "text-[#1a9951]"
+                                    : "text-[#1d271f]";
 
-                                        <div className="min-w-0 flex-1">
-                                            <h3
-                                                className="truncate text-base font-semibold leading-[1.4] text-[#1d271f]"
-                                                title={product.nameBn}
+                            const arrow = isUp ? "▲" : isDown ? "▼" : "—";
+
+                            const productUnit =
+                                UNIT_LABELS[product.unit] ?? product.unit;
+
+                            return (
+                                <Link
+                                    key={product.id}
+                                    href={`/product/${product.slug}`}
+                                    className="group block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f0f5f0]"
+                                >
+                                    <article className="flex h-full flex-col justify-between gap-3.5 rounded-xl border border-[#e1e8e1] bg-[#fafcfa] p-4 shadow-[0_1px_2px_rgba(23,58,36,0.03)] transition-colors duration-200 group-hover:border-[#c9dccd]">
+                                        <div className="flex items-start gap-4">
+                                            <span
+                                                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#f0f5f0] text-[26px] leading-none"
+                                                aria-hidden="true"
                                             >
-                                                {product.nameBn}
-                                            </h3>
-
-                                            <p className="text-xs leading-[1.5] text-[#66756b]">
-                                                প্রতি {productUnit}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-end justify-between gap-2">
-                                        <div>
-                                            <span className="block text-xs leading-[1.4] text-[#7d8a80]">
-                                                আজকের দাম
+                                                {product.categoryIcon}
                                             </span>
 
-                                            <p className="mt-0.5 text-base font-bold leading-[1.4] text-[#1d271f]">
-                                                ৳{formatPrice(product.today)} টাকা
-                                            </p>
+                                            <div className="min-w-0 flex-1">
+                                                <h3
+                                                    className="truncate text-base font-semibold leading-[1.4] text-[#1d271f]"
+                                                    title={product.nameBn}
+                                                >
+                                                    {product.nameBn}
+                                                </h3>
+
+                                                <p className="text-xs leading-[1.5] text-[#66756b]">
+                                                    প্রতি {productUnit}
+                                                </p>
+                                            </div>
                                         </div>
 
-                                        <span
-                                            className={`inline-flex shrink-0 items-center gap-1 rounded-full bg-[#f0f5f0] px-2 py-1 text-xs font-semibold leading-[1.33] ${changeColor}`}
-                                        >
-                                            <span className="sr-only">
-                                                {isUp
-                                                    ? "দাম বেড়েছে"
-                                                    : isDown
-                                                        ? "দাম কমেছে"
-                                                        : "দামের পরিবর্তন নেই"}
-                                            </span>
+                                        <div className="flex items-end justify-between gap-2">
+                                            <div>
+                                                <span className="block text-xs leading-[1.4] text-[#7d8a80]">
+                                                    আজকের দাম
+                                                </span>
 
-                                            <span aria-hidden="true" className="text-[10px]">
-                                                {arrow}
+                                                <p className="mt-0.5 text-base font-bold leading-[1.4] text-[#1d271f]">
+                                                    ৳{formatPrice(product.today)} টাকা
+                                                </p>
+                                            </div>
+
+                                            <span
+                                                className={`inline-flex shrink-0 items-center gap-1 rounded-full bg-[#f0f5f0] px-2 py-1 text-xs font-semibold leading-[1.33] ${changeColor}`}
+                                            >
+                                                <span className="sr-only">
+                                                    {isUp
+                                                        ? "দাম বেড়েছে"
+                                                        : isDown
+                                                            ? "দাম কমেছে"
+                                                            : "দামের পরিবর্তন নেই"}
+                                                </span>
+
+                                                <span aria-hidden="true" className="text-[10px]">
+                                                    {arrow}
+                                                </span>
+                                                <span>{formatPercent(product.change.pct)}%</span>
                                             </span>
-                                            <span>{formatPercent(product.change.pct)}%</span>
-                                        </span>
-                                    </div>
-                                </article>
-                            </Link>
-                        );
-                    })}
-                </div>
+                                        </div>
+                                    </article>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
         </section>
     );

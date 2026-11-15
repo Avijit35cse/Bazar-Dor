@@ -10,8 +10,8 @@ const PriceMover = ({ products }: PriceMoverProps) => {
 
     const decreasedProducts = products.filter(
         (product) => product.change.dir === "down")
-        .sort((a, b) => b.change.pct - a.change.pct)
-        .slice(0, 6);
+        .sort((a, b) => a.change.pct - b.change.pct)
+        .slice(0, 6)
 
     return (
         <section className="bg-[#f0f5f0] px-4 pt-10">

@@ -1,7 +1,10 @@
+
 "use client";
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 import SignOutIcon from "@/components/shared/SignOutIcon";
 
@@ -17,6 +20,7 @@ function ProfileForm({ initialName }: ProfileFormProps) {
     const handleUpdateProfile = async () => {
         if (!name.trim()) {
             setMessage("নাম লিখুন");
+            toast.error("নাম লিখুন");
             return;
         }
 
@@ -29,15 +33,19 @@ function ProfileForm({ initialName }: ProfileFormProps) {
             });
 
             if (error) {
-                setMessage(
-                    error.message || "প্রোফাইল আপডেট করা যায়নি"
-                );
+                const errorMessage =
+                    error.message || "প্রোফাইল আপডেট করা যায়নি";
+
+                setMessage(errorMessage);
+                toast.error(errorMessage);
                 return;
             }
 
             setMessage("প্রোফাইল সফলভাবে আপডেট হয়েছে");
+            toast.success("প্রোফাইল সফলভাবে আপডেট হয়েছে");
         } catch {
             setMessage("প্রোফাইল আপডেট করা যায়নি");
+            toast.error("প্রোফাইল আপডেট করা যায়নি");
         } finally {
             setIsSaving(false);
         }
@@ -94,7 +102,32 @@ function ProfileForm({ initialName }: ProfileFormProps) {
 }
 
 export default function ProfilePage() {
+    const router = useRouter();
     const { data: session, isPending } = authClient.useSession();
+    const [isSigningOut, setIsSigningOut] = useState(false);
+
+    const handleSignOut = async () => {
+        if (isSigningOut) return;
+
+        setIsSigningOut(true);
+
+        try {
+            const { error } = await authClient.signOut();
+
+            if (error) {
+                toast.error(error.message || "সাইন আউট করা যায়নি");
+                return;
+            }
+
+            toast.success("সফলভাবে সাইন আউট হয়েছে!");
+            router.push("/");
+            router.refresh();
+        } catch {
+            toast.error("সাইন আউট করা যায়নি");
+        } finally {
+            setIsSigningOut(false);
+        }
+    };
 
     /* Loading */
     if (isPending) {
@@ -182,14 +215,12 @@ export default function ProfilePage() {
                             {/* Sign out */}
                             <button
                                 type="button"
-                                onClick={async () => {
-                                    await authClient.signOut();
-                                    window.location.href = "/";
-                                }}
-                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 self-start rounded-[10px] border border-[#ef8585] bg-white px-4 text-[13px] font-medium leading-none text-[#d03739] transition-colors hover:bg-[#fff5f5] sm:h-[50px] sm:self-auto sm:px-5 sm:text-sm"
+                                onClick={handleSignOut}
+                                disabled={isSigningOut}
+                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 self-start rounded-[10px] border border-[#ef8585] bg-white px-4 text-[13px] font-medium leading-none text-[#d03739] transition-colors hover:bg-[#fff5f5] disabled:cursor-not-allowed disabled:opacity-60 sm:h-[50px] sm:self-auto sm:px-5 sm:text-sm"
                             >
                                 <SignOutIcon className="h-[18px] w-[18px] shrink-0" />
-                                সাইন আউট
+                                {isSigningOut ? "সাইন আউট হচ্ছে..." : "সাইন আউট"}
                             </button>
                         </div>
                     </section>

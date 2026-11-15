@@ -1,11 +1,12 @@
+
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Hind_Siliguri } from "next/font/google";
 import "./globals.css";
-import { Hind_Siliguri } from "next/font/google"
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import PriceTicker from "@/components/layout/PriceTicker";
 import { Suspense } from "react";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,20 +35,26 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${hindSiliguri.variable} h-full antialiased`}
-      
     >
       <body className="min-h-full flex flex-col">
+        <Toaster position="top-center" />
+
         <Navbar />
-        <Suspense fallback= {<div className="flex h-9 items-center px-4 text-sm text-gray-500">
-            বাজারদর লোড হচ্ছে...
-        </div>}>
-            <PriceTicker/>
+
+        <Suspense
+          fallback={
+            <div className="flex h-9 items-center px-4 text-sm text-gray-500">
+              বাজারদর লোড হচ্ছে...
+            </div>
+          }
+        >
+          <PriceTicker />
         </Suspense>
-        <main>
-          {children}
-        </main>
-        <Footer/>
-        </body>
+
+        <main>{children}</main>
+
+        <Footer />
+      </body>
     </html>
   );
 }
