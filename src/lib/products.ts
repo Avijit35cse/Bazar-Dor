@@ -1,18 +1,27 @@
 
-import { Product } from "@/types/allTypes";
+import type { Product } from "@/types/allTypes";
+
+const PRODUCTS_API =
+    "https://openapi.programming-hero.com/api/bazardor/products";
 
 export const getProducts = async (): Promise<Product[]> => {
-    const response = await fetch(
-        "https://openapi.programming-hero.com/api/bazardor/products"
-    );
+    const response = await fetch(PRODUCTS_API, {
+        cache: "no-store",
+    });
 
     if (!response.ok) {
-        throw new Error("Failed to fetch products");
+        throw new Error(
+            `Failed to fetch products: ${response.status}`
+        );
     }
 
-    const products: Product[] = await response.json();
+    const data: unknown = await response.json();
 
-    return products;
+    if (!Array.isArray(data)) {
+        throw new Error("Invalid products API response");
+    }
+
+    return data as Product[];
 };
 
 export const getProductBySlug = async (
@@ -20,8 +29,13 @@ export const getProductBySlug = async (
 ): Promise<Product | null> => {
     const products = await getProducts();
 
+    const normalizedSlug = decodeURIComponent(slug)
+        .trim()
+        .toLowerCase();
+
     const product = products.find(
-        (item) => item.slug === slug
+        (item) =>
+            item.slug?.trim().toLowerCase() === normalizedSlug
     );
 
     return product ?? null;

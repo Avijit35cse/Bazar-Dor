@@ -1,7 +1,10 @@
+
 import { getProductBySlug } from "@/lib/products";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { Suspense } from "react";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 
 type ProductDetailsPageProps = {
     params: Promise<{
@@ -32,12 +35,23 @@ const UNIT_LABELS: Record<string, string> = {
     piece: "পিস",
 };
 
-// Async component: এখানে API থেকে data fetch হবে
 const ProductDetailsContent = async ({
     params,
 }: ProductDetailsPageProps) => {
     const { slug } = await params;
 
+    // Authentication check inside Suspense
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
+
+    if (!session) {
+        redirect(
+            `/sign-in?callbackUrl=${encodeURIComponent(`/product/${slug}`)}`
+        );
+    }
+
+    // Fetch product after authentication
     const product = await getProductBySlug(slug);
 
     if (!product) {
@@ -349,7 +363,7 @@ const ProductDetailsContent = async ({
                                                     {formatAverage(
                                                         (market.min +
                                                             market.max) /
-                                                        2
+                                                            2
                                                     )}{" "}
                                                     টাকা
                                                 </td>
@@ -366,7 +380,6 @@ const ProductDetailsContent = async ({
     );
 };
 
-// Synchronous page: Async component-কে Suspense দিয়ে wrap করবে
 const ProductDetailsPage = ({
     params,
 }: ProductDetailsPageProps) => {

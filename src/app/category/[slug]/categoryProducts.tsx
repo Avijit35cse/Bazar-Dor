@@ -126,7 +126,7 @@ const CategoryProducts = ({ products }: CategoryProductsProps) => {
                         return (
                             <Link
                                 key={product.id}
-                                href={`/products/${product.slug}`}
+                                href={`/product/${product.slug}`}
                                 className="group block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f0f5f0]"
                             >
                                 <article className="flex h-full flex-col justify-between gap-3.5 rounded-xl border border-[#e1e8e1] bg-[#fafcfa] p-4 shadow-[0_1px_2px_rgba(23,58,36,0.03)] transition-colors duration-200 group-hover:border-[#c9dccd]">

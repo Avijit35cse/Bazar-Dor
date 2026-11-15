@@ -1,14 +1,19 @@
+
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
 
 type PasswordFieldProps = {
     id: string;
     label: string;
     placeholder: string;
     autoComplete: "new-password";
+    value: string;
+    onChange: (value: string) => void;
 };
 
 const inputClassName =
@@ -19,6 +24,8 @@ const PasswordField = ({
     label,
     placeholder,
     autoComplete,
+    value,
+    onChange,
 }: PasswordFieldProps) => {
     const [showPassword, setShowPassword] = useState(false);
 
@@ -38,13 +45,18 @@ const PasswordField = ({
                     type={showPassword ? "text" : "password"}
                     placeholder={placeholder}
                     autoComplete={autoComplete}
+                    value={value}
+                    onChange={(event) => onChange(event.target.value)}
                     className={`${inputClassName} pr-11`}
+                    required
                 />
 
                 <button
                     type="button"
                     onClick={() => setShowPassword((isVisible) => !isVisible)}
-                    aria-label={showPassword ? "পাসওয়ার্ড লুকান" : "পাসওয়ার্ড দেখান"}
+                    aria-label={
+                        showPassword ? "পাসওয়ার্ড লুকান" : "পাসওয়ার্ড দেখান"
+                    }
                     aria-pressed={showPassword}
                     className="absolute inset-y-0 right-1 my-auto flex h-8 w-8 items-center justify-center rounded-md text-[#66756b] transition-colors hover:bg-[#f0f5f0] hover:text-[#05893e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e]"
                 >
@@ -94,12 +106,15 @@ const GitHubIcon = () => (
 const SocialButton = ({
     icon,
     label,
+    onClick,
 }: {
     icon: ReactNode;
     label: string;
+    onClick: () => void;
 }) => (
     <button
         type="button"
+        onClick={onClick}
         className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-[#e1e8e1] bg-[#fafcfa] px-3 text-[13px] font-semibold text-[#1d271f] transition-all hover:border-[#c8d5cb] hover:bg-[#f0f5f0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fafcfa] active:scale-[0.99]"
     >
         {icon}
@@ -108,11 +123,74 @@ const SocialButton = ({
 );
 
 export default function SignUpPage() {
+    const router = useRouter();
+
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const handleSignUp = async () => {
+        setErrorMessage("");
+
+        if (password.length < 8) {
+            setErrorMessage("পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।");
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            setErrorMessage("দুটি পাসওয়ার্ড মিলছে না।");
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            const { error } = await authClient.signUp.email({
+                name: name.trim(),
+                email: email.trim(),
+                password,
+            });
+
+            if (error) {
+                setErrorMessage(
+                    error.message || "অ্যাকাউন্ট তৈরি করা যায়নি। আবার চেষ্টা করুন।"
+                );
+                return;
+            }
+
+            router.push("/");
+            router.refresh();
+        } catch {
+            setErrorMessage(
+                "একটি সমস্যা হয়েছে। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।"
+            );
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleGoogleSignUp = async () => {
+        await authClient.signIn.social({
+            provider: "google",
+            callbackURL: "/",
+        });
+    };
+
+    const handleGitHubSignUp = async () => {
+        await authClient.signIn.social({
+            provider: "github",
+            callbackURL: "/",
+        });
+    };
+
     return (
         <div className="flex min-h-[calc(100vh-220px)] w-full items-start justify-center bg-[#f0f5f0] px-4 py-10 sm:py-14">
             <div className="w-full max-w-[430px]">
                 <header className="flex flex-col items-center text-center">
-                    
                     <h1
                         id="sign-up-heading"
                         className="mt-6 text-[26px] font-bold leading-tight tracking-[-0.5px] text-[#1d271f] sm:text-[28px]"
@@ -129,63 +207,90 @@ export default function SignUpPage() {
                     aria-labelledby="sign-up-heading"
                     className="mt-7 rounded-2xl border border-[#e1e8e1] bg-[#fafcfa] p-5 shadow-[0_20px_45px_-30px_rgba(29,39,31,0.35)] sm:p-7"
                 >
-                    <div className="space-y-4">
-                        <div>
-                            <label
-                                htmlFor="full-name"
-                                className="mb-2 block text-[13px] font-semibold text-[#1d271f]"
-                            >
-                                নাম
-                            </label>
-                            <input
-                                id="full-name"
-                                name="full-name"
-                                type="text"
-                                placeholder="যেমন: রহিম উদ্দিন"
-                                autoComplete="name"
-                                className={inputClassName}
-                            />
-                        </div>
-
-                        <div>
-                            <label
-                                htmlFor="email"
-                                className="mb-2 block text-[13px] font-semibold text-[#1d271f]"
-                            >
-                                ইমেইল
-                            </label>
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                placeholder="you@example.com"
-                                autoComplete="email"
-                                spellCheck={false}
-                                className={inputClassName}
-                            />
-                        </div>
-
-                        <PasswordField
-                            id="password"
-                            label="পাসওয়ার্ড"
-                            placeholder="কমপক্ষে ৮ অক্ষর"
-                            autoComplete="new-password"
-                        />
-
-                        <PasswordField
-                            id="confirm-password"
-                            label="পাসওয়ার্ড নিশ্চিত করুন"
-                            placeholder="আবার লিখুন"
-                            autoComplete="new-password"
-                        />
-                    </div>
-
-                    <button
-                        type="button"
-                        className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-lg bg-[#05893e] px-4 text-sm font-semibold text-white shadow-[0_8px_20px_-12px_rgba(5,137,62,0.9)] transition-all hover:bg-[#047f39] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fafcfa] active:scale-[0.995]"
+                    <form
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            void handleSignUp();
+                        }}
                     >
-                        অ্যাকাউন্ট তৈরি করুন
-                    </button>
+                        <div className="space-y-4">
+                            <div>
+                                <label
+                                    htmlFor="full-name"
+                                    className="mb-2 block text-[13px] font-semibold text-[#1d271f]"
+                                >
+                                    নাম
+                                </label>
+                                <input
+                                    id="full-name"
+                                    name="name"
+                                    type="text"
+                                    placeholder="যেমন: রহিম উদ্দিন"
+                                    autoComplete="name"
+                                    value={name}
+                                    onChange={(event) => setName(event.target.value)}
+                                    className={inputClassName}
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label
+                                    htmlFor="email"
+                                    className="mb-2 block text-[13px] font-semibold text-[#1d271f]"
+                                >
+                                    ইমেইল
+                                </label>
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    placeholder="you@example.com"
+                                    autoComplete="email"
+                                    spellCheck={false}
+                                    value={email}
+                                    onChange={(event) => setEmail(event.target.value)}
+                                    className={inputClassName}
+                                    required
+                                />
+                            </div>
+
+                            <PasswordField
+                                id="password"
+                                label="পাসওয়ার্ড"
+                                placeholder="কমপক্ষে ৮ অক্ষর"
+                                autoComplete="new-password"
+                                value={password}
+                                onChange={setPassword}
+                            />
+
+                            <PasswordField
+                                id="confirm-password"
+                                label="পাসওয়ার্ড নিশ্চিত করুন"
+                                placeholder="আবার লিখুন"
+                                autoComplete="new-password"
+                                value={confirmPassword}
+                                onChange={setConfirmPassword}
+                            />
+                        </div>
+
+                        {errorMessage && (
+                            <p
+                                role="alert"
+                                className="mt-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-[13px] leading-5 text-red-600"
+                            >
+                                {errorMessage}
+                            </p>
+                        )}
+
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-lg bg-[#05893e] px-4 text-sm font-semibold text-white shadow-[0_8px_20px_-12px_rgba(5,137,62,0.9)] transition-all hover:bg-[#047f39] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fafcfa] active:scale-[0.995] disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {isLoading ? "অ্যাকাউন্ট তৈরি হচ্ছে..." : "অ্যাকাউন্ট তৈরি করুন"}
+                        </button>
+                    </form>
 
                     <div className="my-6 flex items-center gap-3 text-xs font-medium text-[#8a978e]">
                         <span className="h-px flex-1 bg-[#e1e8e1]" aria-hidden="true" />
@@ -193,13 +298,23 @@ export default function SignUpPage() {
                         <span className="h-px flex-1 bg-[#e1e8e1]" aria-hidden="true" />
                     </div>
 
-                    <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2">
-                        <SocialButton icon={<GoogleIcon />} label="Google দিয়ে চালিয়ে যান" />
-                        <SocialButton icon={<GitHubIcon />} label="GitHub দিয়ে চালিয়ে যান" />
+                   <div className="grid grid-cols-1 gap-3 min-[480px]:grid-cols-2">
+                        <SocialButton
+                            icon={<GoogleIcon />}
+                            label="Google দিয়ে চালিয়ে যান"
+                            onClick={handleGoogleSignUp}
+                             
+                        />
+
+                        <SocialButton
+                            icon={<GitHubIcon />}
+                            label="GitHub দিয়ে চালিয়ে যান"
+                            onClick={handleGitHubSignUp}
+                        />
                     </div>
 
                     <p className="mt-6 border-t border-[#e1e8e1] pt-5 text-center text-[13.5px] text-[#66756b]">
-                            অ্যাকাউন্ট আছে?{" "}
+                        অ্যাকাউন্ট আছে?{" "}
                         <Link
                             href="/sign-in"
                             className="rounded font-semibold text-[#05893e] transition-colors hover:text-[#047f39] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fafcfa]"

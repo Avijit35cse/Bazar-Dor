@@ -38,7 +38,7 @@ const CategoryContent = async ({ params }: CategoryPageProps) => {
 
     const products: Product[] = await productsResponse.json();
 
-    // এই লাইনে যোগ করো
+    
 console.log(JSON.stringify(products[0], null, 2));
 
     return <CategoryProducts products={products} />;
