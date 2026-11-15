@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import SignOutIcon from "@/components/shared/SignOutIcon";
 
 type ProfileFormProps = {
     initialName: string;
@@ -44,49 +44,51 @@ function ProfileForm({ initialName }: ProfileFormProps) {
     };
 
     return (
-        <section className="mt-[12px] rounded-[9px] border border-[#e2e9e2] bg-[#fafcfa] px-[22px] py-[17px]">
+        <section className="mt-7 rounded-[14px] border border-[#e2e9e2] bg-[#fafcfa] px-5 pb-10 pt-5 sm:px-6">
             {/* Section title */}
-            <h2 className="text-[11px] font-semibold leading-4 text-[#1d271f]">
+            <h2 className="text-base font-semibold leading-6 text-[#1d271f]">
                 তথ্য
             </h2>
 
-            {/* Name */}
-            <div className="mt-[17px]">
-                <label
-                    htmlFor="name"
-                    className="mb-[6px] block text-[9px] font-medium leading-3 text-[#1d271f]"
+            <div className="mt-8 px-1 sm:mt-9 sm:px-3">
+                {/* Name */}
+                <div>
+                    <label
+                        htmlFor="name"
+                        className="mb-1 block text-[13px] font-medium leading-5 text-[#1d271f]"
+                    >
+                        নাম
+                    </label>
+
+                    <input
+                        id="name"
+                        type="text"
+                        value={name}
+                        onChange={(event) => {
+                            setName(event.target.value);
+                            setMessage("");
+                        }}
+                        className="h-10 w-full rounded-md border border-[#dfe7df] bg-white px-3 text-[13px] text-[#1d271f] outline-none transition focus:border-[#05893e] focus:ring-1 focus:ring-[#05893e] sm:h-9"
+                        placeholder="আপনার নাম"
+                    />
+                </div>
+
+                {/* Update button */}
+                <button
+                    type="button"
+                    onClick={handleUpdateProfile}
+                    disabled={isSaving}
+                    className="mt-6 h-10 w-full rounded-md bg-[#05893e] text-[13px] font-semibold text-white shadow-[0_1px_3px_rgba(0,0,0,0.14)] transition hover:bg-[#047a37] disabled:cursor-not-allowed disabled:opacity-60 sm:h-9"
                 >
-                    নাম
-                </label>
+                    {isSaving ? "আপডেট হচ্ছে..." : "আপডেট"}
+                </button>
 
-                <input
-                    id="name"
-                    type="text"
-                    value={name}
-                    onChange={(event) => {
-                        setName(event.target.value);
-                        setMessage("");
-                    }}
-                    className="h-[21px] w-full rounded-[5px] border border-[#dfe7df] bg-white px-2 text-[9px] text-[#1d271f] outline-none transition focus:border-[#05893e] focus:ring-1 focus:ring-[#05893e]"
-                    placeholder="আপনার নাম"
-                />
+                {message && (
+                    <p className="mt-3 text-center text-xs text-[#5d6b60]">
+                        {message}
+                    </p>
+                )}
             </div>
-
-            {/* Update button */}
-            <button
-                type="button"
-                onClick={handleUpdateProfile}
-                disabled={isSaving}
-                className="mt-[9px] h-[22px] w-full rounded-[5px] bg-[#05893e] text-[9px] font-semibold text-white shadow-[0_1px_3px_rgba(0,0,0,0.18)] transition hover:bg-[#047a37] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-                {isSaving ? "আপডেট হচ্ছে..." : "আপডেট"}
-            </button>
-
-            {message && (
-                <p className="mt-2 text-center text-[8px] text-[#5d6b60]">
-                    {message}
-                </p>
-            )}
         </section>
     );
 }
@@ -97,9 +99,9 @@ export default function ProfilePage() {
     /* Loading */
     if (isPending) {
         return (
-            <main className="min-h-[calc(100vh-120px)] bg-[#f1f6f1]">
-                <div className="mx-auto flex min-h-[400px] max-w-[376px] items-center justify-center">
-                    <p className="text-[10px] text-[#5d6b60]">
+            <main className="min-h-[calc(100vh-120px)] bg-[#f0f5f0]">
+                <div className="mx-auto flex min-h-[400px] max-w-[736px] items-center justify-center">
+                    <p className="text-[13px] text-[#5d6b60]">
                         প্রোফাইল লোড হচ্ছে...
                     </p>
                 </div>
@@ -110,19 +112,19 @@ export default function ProfilePage() {
     /* Not logged in */
     if (!session?.user) {
         return (
-            <main className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-[#f1f6f1] px-4">
-                <div className="w-full max-w-[376px] rounded-[9px] border border-[#e2e9e2] bg-[#fafcfa] p-6 text-center">
-                    <h1 className="text-base font-bold text-[#1d271f]">
+            <main className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-[#f0f5f0] px-4">
+                <div className="w-full max-w-[420px] rounded-[14px] border border-[#e2e9e2] bg-[#fafcfa] p-8 text-center">
+                    <h1 className="text-xl font-bold text-[#1d271f]">
                         লগইন করুন
                     </h1>
 
-                    <p className="mt-2 text-[10px] text-[#5d6b60]">
+                    <p className="mt-2 text-[13px] text-[#5d6b60]">
                         প্রোফাইল দেখতে আগে লগইন করুন।
                     </p>
 
                     <Link
                         href="/sign-in"
-                        className="mt-4 inline-flex h-8 items-center rounded-md bg-[#05893e] px-5 text-[10px] font-semibold text-white"
+                        className="mt-5 inline-flex h-10 items-center rounded-md bg-[#05893e] px-5 text-[13px] font-semibold text-white"
                     >
                         সাইন ইন
                     </Link>
@@ -138,40 +140,40 @@ export default function ProfilePage() {
         )}&background=e7efe8&color=1d271f`;
 
     return (
-        <main className="min-h-[calc(100vh-120px)] bg-[#f1f6f1]">
+        <main className="min-h-[calc(100vh-246px)] bg-[#f0f5f0] sm:min-h-[calc(100vh-217px)]">
             <div className="mx-auto w-full max-w-[1152px] px-4">
-                <div className="mx-auto w-full max-w-[376px] pt-[73px] pb-[112px]">
+                <div className="mx-auto w-full max-w-[736px] pt-12 pb-16 sm:pt-[136px] sm:pb-24">
 
                     {/* Page heading */}
-                    <div className="mb-[20px]">
-                        <h1 className="text-[15px] font-bold leading-[19px] text-[#1d271f]">
+                    <div className="mb-7">
+                        <h1 className="text-xl font-bold leading-7 tracking-[-0.2px] text-[#1d271f] sm:text-[28px] sm:leading-[30px]">
                             আমার প্রোফাইল
                         </h1>
 
-                        <p className="mt-[1px] text-[8px] leading-[12px] text-[#7a857d]">
+                        <p className="text-xs leading-[18px] text-[#7a857d] sm:text-[13px]">
                             আপনার অ্যাকাউন্টের তথ্য এখানে দেখুন।
                         </p>
                     </div>
 
                     {/* User information card */}
-                    <section className="rounded-[9px] border border-[#e2e9e2] bg-[#fafcfa] px-[15px] py-[13px]">
-                        <div className="flex items-center justify-between gap-3">
+                    <section className="rounded-[14px] border border-[#e2e9e2] bg-[#fafcfa] p-5 sm:px-7 sm:py-7">
+                        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
 
                             {/* Avatar + user info */}
-                            <div className="flex min-w-0 items-center gap-[9px]">
+                            <div className="flex min-w-0 items-center gap-4 sm:gap-5">
                                 <img
                                     src={avatar}
                                     alt={session.user.name || "User"}
-                                    className="h-[43px] w-[43px] shrink-0 rounded-[8px] object-cover"
+                                    className="h-14 w-14 shrink-0 rounded-[10px] object-cover sm:h-16 sm:w-16"
                                 />
 
                                 <div className="min-w-0">
-                                    <h2 className="truncate text-[10px] font-semibold leading-[14px] text-[#1d271f]">
+                                    <h2 className="truncate text-base font-semibold leading-6 text-[#1d271f] sm:text-lg sm:leading-[24px]">
                                         {session.user.name ||
                                             "ব্যবহারকারী"}
                                     </h2>
 
-                                    <p className="mt-[1px] truncate text-[8px] leading-[11px] text-[#7a857d]">
+                                    <p className="mt-0.5 truncate text-[13px] leading-5 text-[#7a857d] sm:text-sm">
                                         {session.user.email}
                                     </p>
                                 </div>
@@ -184,9 +186,9 @@ export default function ProfilePage() {
                                     await authClient.signOut();
                                     window.location.href = "/";
                                 }}
-                                className="inline-flex h-[37px] shrink-0 items-center justify-center gap-[5px] rounded-[8px] border border-[#ef8585] bg-white px-[11px] text-[12px] font-medium leading-none text-[#d03739] transition-colors hover:bg-[#fff5f5]"
+                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 self-start rounded-[10px] border border-[#ef8585] bg-white px-4 text-[13px] font-medium leading-none text-[#d03739] transition-colors hover:bg-[#fff5f5] sm:h-[50px] sm:self-auto sm:px-5 sm:text-sm"
                             >
-                                <ArrowLeft className="h-[12px] w-[12px] shrink-0" />
+                                <SignOutIcon className="h-[18px] w-[18px] shrink-0" />
                                 সাইন আউট
                             </button>
                         </div>
