@@ -5,6 +5,13 @@ import clientPromise from "@/lib/mongodb";
 const client = await clientPromise;
 
 export const auth = betterAuth({
+
+    baseURL: process.env.BETTER_AUTH_URL,
+
+    trustedOrigins: [
+        "https://bazar-dor-b14.vercel.app",
+    ],
+    
     database: mongodbAdapter(client.db("bazar-dor"), {
         client,
     }),
