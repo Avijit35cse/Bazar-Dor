@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 import SignOutIcon from "@/components/shared/SignOutIcon";
+import BrandLoader, { Spinner } from "@/components/shared/BrandLoader";
 
 type ProfileFormProps = {
     initialName: string;
@@ -18,6 +19,8 @@ function ProfileForm({ initialName }: ProfileFormProps) {
     const [message, setMessage] = useState("");
 
     const handleUpdateProfile = async () => {
+        if (isSaving) return;
+
         if (!name.trim()) {
             setMessage("নাম লিখুন");
             toast.error("নাম লিখুন");
@@ -86,9 +89,17 @@ function ProfileForm({ initialName }: ProfileFormProps) {
                     type="button"
                     onClick={handleUpdateProfile}
                     disabled={isSaving}
-                    className="mt-6 h-10 w-full rounded-md bg-[#05893e] text-[13px] font-semibold text-white shadow-[0_1px_3px_rgba(0,0,0,0.14)] transition hover:bg-[#047a37] disabled:cursor-not-allowed disabled:opacity-60 sm:h-9"
+                    aria-busy={isSaving}
+                    className="mt-6 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-[#05893e] text-[13px] font-semibold text-white shadow-[0_1px_3px_rgba(0,0,0,0.14)] transition hover:bg-[#047a37] disabled:cursor-not-allowed disabled:opacity-60 sm:h-9"
                 >
-                    {isSaving ? "আপডেট হচ্ছে..." : "আপডেট"}
+                    {isSaving ? (
+                        <>
+                            <Spinner />
+                            <span>আপডেট হচ্ছে...</span>
+                        </>
+                    ) : (
+                        "আপডেট"
+                    )}
                 </button>
 
                 {message && (
@@ -132,12 +143,8 @@ export default function ProfilePage() {
     /* Loading */
     if (isPending) {
         return (
-            <main className="min-h-[calc(100vh-120px)] bg-[#f0f5f0]">
-                <div className="mx-auto flex min-h-[400px] max-w-[736px] items-center justify-center">
-                    <p className="text-[13px] text-[#5d6b60]">
-                        প্রোফাইল লোড হচ্ছে...
-                    </p>
-                </div>
+            <main className="flex min-h-[calc(100vh-120px)] items-center justify-center bg-[#f0f5f0]">
+                <BrandLoader label="প্রোফাইল লোড হচ্ছে..." />
             </main>
         );
     }
@@ -217,10 +224,20 @@ export default function ProfilePage() {
                                 type="button"
                                 onClick={handleSignOut}
                                 disabled={isSigningOut}
+                                aria-busy={isSigningOut}
                                 className="inline-flex h-11 shrink-0 items-center justify-center gap-2 self-start rounded-[10px] border border-[#ef8585] bg-white px-4 text-[13px] font-medium leading-none text-[#d03739] transition-colors hover:bg-[#fff5f5] disabled:cursor-not-allowed disabled:opacity-60 sm:h-[50px] sm:self-auto sm:px-5 sm:text-sm"
                             >
-                                <SignOutIcon className="h-[18px] w-[18px] shrink-0" />
-                                {isSigningOut ? "সাইন আউট হচ্ছে..." : "সাইন আউট"}
+                                {isSigningOut ? (
+                                    <>
+                                        <Spinner className="h-3.5 w-3.5 border-[#d03739]/25 border-t-[#d03739]" />
+                                        <span>সাইন আউট হচ্ছে...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <SignOutIcon className="h-[18px] w-[18px] shrink-0" />
+                                        <span>সাইন আউট</span>
+                                    </>
+                                )}
                             </button>
                         </div>
                     </section>

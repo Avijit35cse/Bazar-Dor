@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import type { Product } from "@/types/allTypes";
+import { CategoryPageSkeleton } from "@/components/shared/Skeletons";
 import CategoryProducts from "./categoryProducts";
 import { notFound } from "next/navigation";
 
@@ -44,7 +45,7 @@ const CategoryContent = async ({ params }: CategoryPageProps) => {
 
 const CategoryDetailsPage = ({ params }: CategoryPageProps) => {
     return (
-        <Suspense fallback={<div>Loading category...</div>}>
+        <Suspense fallback={<CategoryPageSkeleton />}>
             <CategoryContent params={params} />
         </Suspense>
     );

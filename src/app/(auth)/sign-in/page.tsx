@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 import { authClient } from "@/lib/auth-client";
+import { Spinner } from "@/components/shared/BrandLoader";
 
 const inputClassName =
     "h-11 w-full rounded-lg border border-[#e1e8e1] bg-white px-3.5 text-sm text-[#1d271f] placeholder:text-[#9aa79f] transition-colors hover:border-[#c8d5cb] focus:border-[#05893e] focus:outline-none focus:ring-4 focus:ring-[#05893e]/10";
@@ -48,17 +49,27 @@ const SocialButton = ({
     icon,
     label,
     onClick,
+    isLoading = false,
+    disabled = false,
 }: {
     icon: ReactNode;
     label: string;
     onClick: () => void;
+    isLoading?: boolean;
+    disabled?: boolean;
 }) => (
     <button
         type="button"
         onClick={onClick}
-        className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-[#e1e8e1] bg-[#fafcfa] px-3 text-[13px] font-semibold text-[#1d271f] transition-all hover:border-[#c8d5cb] hover:bg-[#f0f5f0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fafcfa] active:scale-[0.99]"
+        disabled={disabled || isLoading}
+        aria-busy={isLoading}
+        className="inline-flex h-11 items-center justify-center gap-2 rounded-lg border border-[#e1e8e1] bg-[#fafcfa] px-3 text-[13px] font-semibold text-[#1d271f] transition-all hover:border-[#c8d5cb] hover:bg-[#f0f5f0] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fafcfa] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100"
     >
-        {icon}
+        {isLoading ? (
+            <Spinner className="border-[#1d271f]/25 border-t-[#1d271f]" />
+        ) : (
+            icon
+        )}
         <span>{label}</span>
     </button>
 );
@@ -70,27 +81,56 @@ export default function SignInPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [socialProvider, setSocialProvider] = useState<
+        "google" | "github" | null
+    >(null);
     const [errorMessage, setErrorMessage] = useState("");
 
     const handleGoogleSignIn = async () => {
+        if (socialProvider) return;
+
+        setSocialProvider("google");
+
         try {
-            await authClient.signIn.social({
+            const { error } = await authClient.signIn.social({
                 provider: "google",
                 callbackURL: getCallbackUrl(),
             });
+
+            if (error) {
+                toast.error(
+                    error.message || "Google দিয়ে সাইন ইন করা সম্ভব হয়নি।"
+                );
+                setSocialProvider(null);
+            }
+            // On success Better Auth redirects the browser, so the button
+            // intentionally stays in its loading state until navigation.
         } catch {
             toast.error("Google দিয়ে সাইন ইন করা সম্ভব হয়নি।");
+            setSocialProvider(null);
         }
     };
 
     const handleGitHubSignIn = async () => {
+        if (socialProvider) return;
+
+        setSocialProvider("github");
+
         try {
-            await authClient.signIn.social({
+            const { error } = await authClient.signIn.social({
                 provider: "github",
                 callbackURL: getCallbackUrl(),
             });
+
+            if (error) {
+                toast.error(
+                    error.message || "GitHub দিয়ে সাইন ইন করা সম্ভব হয়নি।"
+                );
+                setSocialProvider(null);
+            }
         } catch {
             toast.error("GitHub দিয়ে সাইন ইন করা সম্ভব হয়নি।");
+            setSocialProvider(null);
         }
     };
 
@@ -229,10 +269,18 @@ export default function SignInPage() {
 
                         <button
                             type="submit"
-                            disabled={isLoading}
-                            className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-lg bg-[#05893e] px-4 text-sm font-semibold text-white shadow-[0_8px_20px_-12px_rgba(5,137,62,0.9)] transition-all hover:bg-[#047f39] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fafcfa] active:scale-[0.995] disabled:cursor-not-allowed disabled:opacity-60"
+                            disabled={isLoading || socialProvider !== null}
+                            aria-busy={isLoading}
+                            className="mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#05893e] px-4 text-sm font-semibold text-white shadow-[0_8px_20px_-12px_rgba(5,137,62,0.9)] transition-all hover:bg-[#047f39] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#05893e] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fafcfa] active:scale-[0.995] disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                            {isLoading ? "সাইন ইন হচ্ছে..." : "সাইন ইন"}
+                            {isLoading ? (
+                                <>
+                                    <Spinner />
+                                    <span>সাইন ইন হচ্ছে...</span>
+                                </>
+                            ) : (
+                                "সাইন ইন"
+                            )}
                         </button>
                     </form>
 
@@ -247,12 +295,16 @@ export default function SignInPage() {
                             icon={<GoogleIcon />}
                             label="Google দিয়ে চালিয়ে যান"
                             onClick={handleGoogleSignIn}
+                            isLoading={socialProvider === "google"}
+                            disabled={isLoading || socialProvider === "github"}
                         />
 
                         <SocialButton
                             icon={<GitHubIcon />}
                             label="GitHub দিয়ে চালিয়ে যান"
                             onClick={handleGitHubSignIn}
+                            isLoading={socialProvider === "github"}
+                            disabled={isLoading || socialProvider === "google"}
                         />
                     </div>
 

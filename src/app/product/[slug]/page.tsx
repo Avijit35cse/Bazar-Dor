@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { ProductDetailsSkeleton } from "@/components/shared/Skeletons";
 
 type ProductDetailsPageProps = {
     params: Promise<{
@@ -384,13 +385,7 @@ const ProductDetailsPage = ({
     params,
 }: ProductDetailsPageProps) => {
     return (
-        <Suspense
-            fallback={
-                <div className="flex min-h-40 items-center justify-center">
-                    <p>পণ্যের তথ্য লোড হচ্ছে...</p>
-                </div>
-            }
-        >
+        <Suspense fallback={<ProductDetailsSkeleton />}>
             <ProductDetailsContent params={params} />
         </Suspense>
     );

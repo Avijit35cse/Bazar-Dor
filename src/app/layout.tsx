@@ -7,6 +7,7 @@ import Footer from "@/components/layout/Footer";
 import PriceTicker from "@/components/layout/PriceTicker";
 import { Suspense } from "react";
 import { Toaster } from "react-hot-toast";
+import BrandLoader from "@/components/shared/BrandLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,9 +44,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 
         <Suspense
           fallback={
-            <div className="flex h-9 items-center px-4 text-sm text-gray-500">
-              বাজারদর লোড হচ্ছে...
-            </div>
+            <BrandLoader
+              compact
+              className="sticky top-28 z-30 w-full sm:top-[116px]"
+            />
           }
         >
           <PriceTicker />

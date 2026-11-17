@@ -1,6 +1,7 @@
 import AllProducts from "@/components/home/AllProducts";
 import PriceMover from "@/components/home/PriceMover";
 import Hero from "@/components/layout/Hero";
+import { HomeProductsSkeleton } from "@/components/shared/Skeletons";
 import  getProducts  from "@/lib/products";
 import { Suspense } from "react";
 
@@ -21,9 +22,7 @@ export default async function Home() {
     <main>
         <Hero/>
         <Suspense fallback = {
-            <div className="flex min-h-40 items-center justify-center">
-                <p>পণ্য লোড হচ্ছে...</p>
-            </div>
+            <HomeProductsSkeleton />
         }>
             <ProductSections/>
         </Suspense>

@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { CategoryNavSkeleton } from "@/components/shared/Skeletons";
 
 
 type Category = {
@@ -15,6 +16,7 @@ type Category = {
 
 const CategoryNav = () => {
     const [categories, setCategories] = useState<Category[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const pathname = usePathname()
 
     useEffect(() => {
@@ -34,11 +36,17 @@ const CategoryNav = () => {
 
             } catch (error) {
                 console.error("Category fetch error:", error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
         fetchCategories();
     }, []);
+
+    if (isLoading) {
+        return <CategoryNavSkeleton />;
+    }
 
     return (
         <nav

@@ -7,6 +7,7 @@ import CategoryNav from "@/components/layout/CategoryNav";
 import BanglaDate from "../shared/BanglaDate";
 import { authClient } from "@/lib/auth-client";
 import ProfileDropdown from "./ProfileDropDown";
+import { CategoryNavSkeleton } from "@/components/shared/Skeletons";
 
 type NavbarProps = {
     isLoggedIn?: boolean;
@@ -99,7 +100,7 @@ const Navbar = (_props: NavbarProps) => {
                 )}
             </div>
 
-            <Suspense fallback={<div className="h-12" />}>
+            <Suspense fallback={<CategoryNavSkeleton />}>
                 <CategoryNav />
             </Suspense>
         </header>
